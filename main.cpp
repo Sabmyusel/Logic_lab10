@@ -9,6 +9,7 @@ int** G;
 int size;
 int max = 0, min = 0;
 int* ex;
+int* FT;
 std::queue<int> Q;
 
 int** gen(bool orient, bool weight) {
@@ -112,14 +113,16 @@ void BFSD(int v, int** dist) {
 			}
 	}
 	printf("\tРасстояния :  ");
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < size; i++) {
 		printf("%d  ", dist[v][i]);
+		FT[v] += dist[v][i];
+	}
 	printf("\nЭксцентриситет : %d", (ex[v] = Max(v, dist)));
 }
 
 void InDep() {
 	ex = new int[size] {0};
-
+	FT = new int[size] {0};
 	int** dist = new int* [size];
 	for (int i = 0; i < size; i++)
 		dist[i] = new int[size];
@@ -136,12 +139,14 @@ void InDep() {
 
 void subset() {
 
-	std::queue<int> R, D;
+	std::queue<int> R, D, T;
 	for(int i = 0; i < size; i++)
 		if (ex[i] == min)
 			R.push(i);
 		else if (ex[i] == max)
 			D.push(i);
+
+
 
 	printf("\nЦентральные вершины: ");
 	while (!R.empty()) {
@@ -153,6 +158,20 @@ void subset() {
 	while (!D.empty()) {
 		printf("%d  ", D.front() + 1);
 		D.pop();
+	}
+	min = 1000;
+	for (int i = 0; i < size; i++)
+		if (FT[i] <= min)
+			min = FT[i];
+
+	for (int i = 0; i < size; i++)
+		if (FT[i] == min)
+			T.push(i);
+
+	printf("\nЦентр тяжести: ");
+	while (!T.empty()) {
+		printf("%d  ", T.front() + 1);
+		T.pop();
 	}
 	printf("\n\n");
 }
